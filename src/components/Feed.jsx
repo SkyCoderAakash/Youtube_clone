@@ -9,7 +9,6 @@ const Feed = () => {
     useEffect(() => {
         document.getElementById("root").classList.remove("custom-h");
     }, []);
-    console.log("home")
     return (
         <div className="flex flex-row h-[calc(100%-56px)]">
             <LeftNav />

@@ -5,9 +5,9 @@ const BASE_URL = "https://youtube138.p.rapidapi.com";
 const options = {
     params: { hl: "hi", gl: "US" },
     headers: {
-        "X-RapidAPI-Key": 'a2cc1107b5msh405fd127b38c297p1e16f6jsn303d2ffbfb19',
-        "X-RapidAPI-Host": "youtube138.p.rapidapi.com",
-    },
+        'X-RapidAPI-Key': '96944dea79mshf90a13e8da9d260p1c4c5bjsnb843eb687961',
+        'X-RapidAPI-Host': 'youtube138.p.rapidapi.com'
+    }
 };
 
 export const fetchDataFromApi = async (url) => {

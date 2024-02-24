@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import ytLogo from "../images/yt-logo.png";
@@ -15,17 +15,30 @@ import Loader from "../shared/loader";
 
 const Header = () => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [suggestion,setSuggestion] = useState([]);
+    // const [showSuggestion,setShowSuggestion] = useState(false);
+
+    useEffect(()=>{
+        const timer = setTimeout(()=>{getSuggestion()},200);
+        return(()=>{
+          clearTimeout(timer);
+        });
+      },[searchQuery]);
+    
+      const getSuggestion = async ()=>{
+        const data = await fetch('http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q='+searchQuery);
+        const json = await data.json();
+        setSuggestion(json[1]);
+      };
 
     const { loading, mobileMenu, setMobileMenu } = useContext(Context);
 
     const navigate = useNavigate();
 
     const searchQueryHandler = (event) => {
-        if (
-            (event?.key === "Enter" || event === "searchButton") &&
-            searchQuery?.length > 0
-        ) {
+        if ((event?.key === "Enter" || event === "searchButton") && searchQuery?.length > 0){
             navigate(`/searchResult/${searchQuery}`);
+            // console.log(suggestion);
         }
     };
 
@@ -67,26 +80,22 @@ const Header = () => {
                 </Link>
             </div>
             <div className="group flex items-center bg-white dark:bg-black">
-                <div className="flex h-8 md:h-10 md:ml-10 md:pl-5 border border-[#303030] rounded-l-3xl group-focus-within:border-blue-500 md:group-focus-within:ml-5 md:group-focus-within:pl-0">
-                    <div className="w-10 items-center justify-center hidden group-focus-within:md:flex">
-                        <IoIosSearch className="text-white text-xl" />
+                    <div className="flex h-8 md:h-10 md:ml-10 md:pl-5 border border-[#303030] rounded-l-3xl group-focus-within:border-blue-500 md:group-focus-within:ml-5 md:group-focus-within:pl-5">
+                        <input type="text" className="bg-transparent outline-none text-white pr-5 pl-5 md:pl-0 w-44 md:group-focus-within:pl-5 md:w-64 lg:w-[500px]" onChange={(e) => setSearchQuery(e.target.value)} onKeyUp={searchQueryHandler} placeholder="Search" value={searchQuery} />
                     </div>
-                    <input
-                        type="text"
-                        className="bg-transparent outline-none text-white pr-5 pl-5 md:pl-0 w-44 md:group-focus-within:pl-0 md:w-64 lg:w-[500px]"
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyUp={searchQueryHandler}
-                        placeholder="Search"
-                        value={searchQuery}
-                    />
-                </div>
-                <button
-                    className="w-[40px] md:w-[60px] h-8 md:h-10 flex items-center justify-center border border-l-0 border-[#303030] rounded-r-3xl bg-white/[0.1]"
-                    onClick={() => searchQueryHandler("searchButton")}
-                >
-                    <IoIosSearch className="text-white text-xl" />
-                </button>
+                    <button className="w-[40px] md:w-[60px] h-8 md:h-10 flex items-center justify-center border border-l-0 border-[#303030] rounded-r-3xl bg-white/[0.1]" onClick={() => searchQueryHandler("searchButton")}>
+                        <IoIosSearch className="text-white text-xl" />
+                    </button>
             </div>
+
+            {/* {showSuggestion && <div className='fixed w-[37%] rounded-2xl bg-gray-100 overflow-hidden z-10'>
+              <ul>
+                {suggestion.map((value)=>{
+                  return (<li key={value} className='px-4 py-1 rounded-2xl hover:bg-black hover:text-white'>{value}</li>)
+                })}
+              </ul>
+            </div>} */}
+            
             <div className="flex items-center bg-white dark:bg-black">
                 <div className="hidden md:flex">
                     <div className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-[#303030]/[0.6]">
@@ -95,9 +104,9 @@ const Header = () => {
                     <div className="flex items-center justify-center ml-2 h-10 w-10 rounded-full hover:bg-[#303030]/[0.6]">
                         <FiBell className="text-white text-xl cursor-pointer" />
                     </div>
-                </div>
-                <div className="flex h-8 w-8 overflow-hidden rounded-full md:ml-4">
-                    <img src="https://xsgames.co/randomusers/assets/avatars/male/67.jpg" />
+                    <div className="flex h-8 w-8 overflow-hidden rounded-full md:ml-4">
+                        <img src="https://xsgames.co/randomusers/assets/avatars/male/67.jpg" />
+                    </div>
                 </div>
             </div>
         </div>
