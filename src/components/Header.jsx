@@ -16,7 +16,7 @@ import Loader from "../shared/loader";
 const Header = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [suggestion,setSuggestion] = useState([]);
-    // const [showSuggestion,setShowSuggestion] = useState(false);
+    const [showSuggestion,setShowSuggestion] = useState(true);
 
     useEffect(()=>{
         const timer = setTimeout(()=>{getSuggestion()},200);
@@ -35,10 +35,15 @@ const Header = () => {
 
     const navigate = useNavigate();
 
+    const listClickHandler = (input)=>{
+        setSearchQuery(input);
+        searchQueryHandler("searchButton");
+    };
+
     const searchQueryHandler = (event) => {
-        if ((event?.key === "Enter" || event === "searchButton") && searchQuery?.length > 0){
+        if ((event?.key === "Enter" || event === "searchButton" || event === "") && searchQuery?.length > 0){
+            setShowSuggestion(false);
             navigate(`/searchResult/${searchQuery}`);
-            // console.log(suggestion);
         }
     };
 
@@ -79,22 +84,23 @@ const Header = () => {
                     />
                 </Link>
             </div>
-            <div className="group flex items-center bg-white dark:bg-black">
+            <div>
+                <div className=" group flex items-center bg-white dark:bg-black">
                     <div className="flex h-8 md:h-10 md:ml-10 md:pl-5 border border-[#303030] rounded-l-3xl group-focus-within:border-blue-500 md:group-focus-within:ml-5 md:group-focus-within:pl-5">
                         <input type="text" className="bg-transparent outline-none text-white pr-5 pl-5 md:pl-0 w-44 md:group-focus-within:pl-5 md:w-64 lg:w-[500px]" onChange={(e) => setSearchQuery(e.target.value)} onKeyUp={searchQueryHandler} placeholder="Search" value={searchQuery} />
                     </div>
                     <button className="w-[40px] md:w-[60px] h-8 md:h-10 flex items-center justify-center border border-l-0 border-[#303030] rounded-r-3xl bg-white/[0.1]" onClick={() => searchQueryHandler("searchButton")}>
                         <IoIosSearch className="text-white text-xl" />
                     </button>
+                </div>
+                {showSuggestion && <div className='fixed w-[37%] rounded-2xl bg-gray-100 overflow-hidden z-10'>
+                    <ul>
+                        {suggestion.map((value)=>{
+                            return (<li key={value} onClick={()=>{listClickHandler(value)}} className='px-4 py-1 rounded-2xl hover:bg-black hover:text-white'>{value}</li>)
+                        })}
+                    </ul>
+                </div>}
             </div>
-
-            {/* {showSuggestion && <div className='fixed w-[37%] rounded-2xl bg-gray-100 overflow-hidden z-10'>
-              <ul>
-                {suggestion.map((value)=>{
-                  return (<li key={value} className='px-4 py-1 rounded-2xl hover:bg-black hover:text-white'>{value}</li>)
-                })}
-              </ul>
-            </div>} */}
             
             <div className="flex items-center bg-white dark:bg-black">
                 <div className="hidden md:flex">
